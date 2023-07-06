@@ -9,6 +9,7 @@ export class App extends LitElement {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 1rem;
+      margin-top: 1rem;
     }
     .item {
       border: 4px solid black;
@@ -16,8 +17,9 @@ export class App extends LitElement {
       align-items: center;
       flex-direction: column;
     }
-    img {
-      heigth: 40px;
+    span {
+      font-weight: bold;
+      color: #02243f;
     }
   `
   constructor() {
@@ -35,9 +37,9 @@ export class App extends LitElement {
         ${this.characters.map(
           c => html`
             <div class="item">
-              <p>${c.name}</p>
-              <p>${c.house}</p>
-              <p>${c.patronus}</p>
+              <p>Nombre: <span>${c.name}</span></p>
+              <p>Casa: <span>${c.house}</span></p>
+              <p>Patronus: <span>${c.patronus}</span></p>
               <p>
                 <img
                   src="${c.image.length > 1
@@ -55,17 +57,20 @@ export class App extends LitElement {
   render() {
     return html`
       <get-data url="https://hp-api.onrender.com/api/characters"></get-data>
-      <h2>Personajes</h2>
+      <h2>Personajes saga Harry Potter</h2>
       <div>
-        <input type="text" @change=${this.handleFilter} />
-      </div>
-      <div>
-        <label>Selecciona la casa</label>
-        <select>
+        <input
+          type="text"
+          @input=${this.handleFilter}
+          placeholder="Filtrar por nombre..."
+        />
+        <select @change="${this.handleSelect}">
+          <option value="Gryffindor">Filtrar por casa...</option>
           <option value="Gryffindor">Gryffindor</option>
           <option value="Slytherin">Slytherin</option>
           <option value="Hufflepuff">Hufflepuff</option>
         </select>
+        <button @click=${this.clearFilters}>Limpiar filtros</button>
       </div>
       ${this.tableTemplate()}
     `
@@ -76,7 +81,12 @@ export class App extends LitElement {
     this.characters = this.characters.filter(c => c.name.includes(text))
   }
   handleSelect(e) {
-    console.log(e)
+    console.log(e.target.value)
+    const house = e.target.value
+    this.characters = this.characters.filter(c => c.house.includes(house))
+  }
+  clearFilters() {
+    location.reload()
   }
 }
 customElements.define('my-app', App)
